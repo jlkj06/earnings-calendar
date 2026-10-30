@@ -28,7 +28,7 @@ from rich.text import Text
 
 WATCHLIST = [
     "NOW", "ASML", "META", "MSFT", "TSM", "AVGO", "GOOGL", "AMZN", "CRDO", "UBER",
-    "ISRG", "TMO", "MA", "MSCI", "SPGI", "V", "INTC", "ABT", "NFLX", "MU", "CL", "MCD", "MNST",
+    "ISRG", "TMO", "MA", "MSCI", "SPGI", "V", "INTC", "ABT", "NFLX", "MU", "CL", "MCD", "MNST", "PLTR",
 ]
 HERE = Path(__file__).resolve().parent
 CACHE_FILE = HERE / "earnings_cache.json"
@@ -230,25 +230,39 @@ small{{opacity:.6}}
     return HTML_FILE
 
 
+def auto_months(data, minimum=3):
+    """Months from the current month through the month of the latest earnings date."""
+    today = dt.date.today()
+    dates = [dt.date.fromisoformat(e["date"]) for e in data.values() if e.get("date")]
+    if not dates:
+        return minimum
+    last = max(dates)
+    return max(minimum, (last.year - today.year) * 12 + last.month - today.month + 1)
+
+
 # --------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(description="Watchlist earnings calendar")
     ap.add_argument("--refresh", action="store_true", help="force re-fetch all tickers")
     ap.add_argument("--html", action="store_true", help="write and open an HTML calendar")
-    ap.add_argument("--months", type=int, default=3, help="months to display (default 3)")
+    ap.add_argument("--months", type=int, default=None,
+                    help="months to display (default: auto, through the last earnings date, min 3)")
     ap.add_argument("--quiet", action="store_true", help="no terminal output (for scheduled runs)")
     args = ap.parse_args()
 
     data = get_data(force=args.refresh, quiet=args.quiet)
+    months = args.months or auto_months(data)
     if not args.quiet:
         print_list(data)
-        print_calendar(data, args.months)
+        print_calendar(data, months)
     if args.html:
-        path = write_html(data, args.months)
+        path = write_html(data, months)
         if not args.quiet:
             console.print(f"[green]Wrote {path}[/green]")
             webbrowser.open(path.as_uri())
 
 
+if __name__ == "__main__":
+    main()
 if __name__ == "__main__":
     main()
