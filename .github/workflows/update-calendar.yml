@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install yfinance rich
-      - run: python earnings_calendar.py --html --quiet --months 3
+      - run: python earnings_calendar.py --html --quiet
       # Fail (and keep the previous published page) if Yahoo returned almost nothing
       - run: python -c "import json; d=json.load(open('earnings_cache.json')); n=sum(1 for v in d.values() if v.get('date')); print(n,'dates found'); assert n>=5"
       - run: mkdir site && cp earnings_calendar.html site/index.html
