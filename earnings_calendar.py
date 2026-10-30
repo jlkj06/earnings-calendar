@@ -28,7 +28,7 @@ from rich.text import Text
 
 WATCHLIST = [
     "NOW", "ASML", "META", "MSFT", "TSM", "AVGO", "GOOGL", "AMZN", "CRDO", "UBER",
-    "ISRG", "TMO", "MA", "MSCI", "SPGI", "V", "INTC", "ABT", "NFLX",
+    "ISRG", "TMO", "MA", "MSCI", "SPGI", "V", "INTC", "ABT", "NFLX", "MU", "CL", "MCD", "MNST",
 ]
 HERE = Path(__file__).resolve().parent
 CACHE_FILE = HERE / "earnings_cache.json"
